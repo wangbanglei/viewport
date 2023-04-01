@@ -1,5 +1,9 @@
 const autoprefixer = require('autoprefixer');
 const pxtoviewport = require('postcss-px-to-viewport');
+const path = require('path')
+function resolve(dir) {
+  return path.join(__dirname, dir);
+}
 
 module.exports = {
   outputDir: 'dist',
@@ -13,7 +17,24 @@ module.exports = {
             viewportWidth: 375
           })
         ]
+      },
+      less: {
+        modifyVars: {
+          'nav-bar-title-text-color': "#ccc",
+          hack: `true; @import "${path.join(
+            __dirname,
+            './assets/styles/common.less'
+          )}";`
+        }
       }
+    },
+  },
+  configureWebpack: {
+    resolve: {
+        alias: {
+            '@': resolve('src'),
+            '#': resolve('asset')
+        }
     }
   }
 };
