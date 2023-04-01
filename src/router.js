@@ -6,27 +6,69 @@ Vue.use(Router);
 const routes = [
   {
     path: '*',
-    redirect: '/goods'
+    redirect: '/curriculum'
   },
   {
-    name: 'user',
-    component: () => import('./view/user'),
+    name: 'curriculum',
+    component: () => import('./view/curriculum/index'),
     meta: {
-      title: '会员中心'
+      title: '课程页面'
     }
   },
   {
-    name: 'cart',
-    component: () => import('./view/cart'),
+    name: 'view',
+    component: () => import('./view/curriculum/view'),
     meta: {
-      title: '购物车'
+      title: '作品查看'
     }
   },
   {
-    name: 'goods',
-    component: () => import('./view/goods'),
+    name: 'template',
+    component: () => import('./view/curriculum/template'),
     meta: {
-      title: '商品详情'
+      title: '课程模板'
+    }
+  },
+  {
+    name: 'works',
+    component: () => import('./view/works/index'),
+    meta: {
+      title: '作品集编辑'
+    }
+  },
+  {
+    name: 'preview',
+    component: () => import('./view/works/preview'),
+    meta: {
+      title: '作品集预览'
+    }
+  },
+  {
+    name: 'individuation',
+    component: () => import('./view/works/individuation'),
+    meta: {
+      title: '作品集个性化'
+    }
+  },
+  {
+    name: 'timeaxis',
+    component: () => import('./view/create/timeaxis'),
+    meta: {
+      title: '创作时光轴'
+    }
+  },
+  {
+    name: 'map',
+    component: () => import('./view/create/map'),
+    meta: {
+      title: '学习地图'
+    }
+  },
+  {
+    name: 'create',
+    component: () => import('./view/create/index'),
+    meta: {
+      title: '动态创作'
     }
   }
 ];

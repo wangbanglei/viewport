@@ -2,6 +2,7 @@
   <div class="nav-bar">
     <van-nav-bar 
     left-text="返回"
+    :title="title"
     left-arrow
     @click-left="goBack"
     ></van-nav-bar>
@@ -16,6 +17,12 @@ import {
 export default {
   components: {
     [NavBar.name]: NavBar
+  },
+
+  computed: {
+    title() {
+      return this.$route.meta.title
+    }
   },
 
   data() {
