@@ -1,13 +1,85 @@
 <template>
-    <div>
-        课程模板
+    <div class="template-container">
+        <van-search v-model="searchVal" @search="search"  @clear="clear" placeholder="请输入搜索关键词" shape="round" left-icon="" right-icon="search" background=""></van-search>
+        <van-grid :gutter="20" :column-num="2" class="list-container" :border=false>
+            <van-grid-item v-for="(item, index) in templateList" :key="index" :clickable=true @click="previewImage(item)">
+                <van-image :src="item.src" radius="20" />
+                <span class="template-name">{{item.name}}</span>
+            </van-grid-item>
+        </van-grid>
+        <van-image-preview v-model="show" :images="images">
+            <template v-slot:cover>
+                <van-button plain type="info" @touchstart="cancle">取消</van-button>
+                <van-button plain type="info" @touchstart="select" style="margin-left: 10vw;">选定</van-button>
+            </template>
+        </van-image-preview>
     </div>
 </template>
 <script>
 export default {
-    
+    data() {
+        return {
+            searchVal: '', // 搜索内容
+            templateList: [],
+            show: false, // 是否展示图片预览框
+            images: [], // 展示的图片地址
+        }
+    },
+    created() {
+        this.getTemplateList();
+    },
+    methods: {
+        getTemplateList() {
+            for (let i = 0; i < 20; i++) {
+                this.templateList.push({
+                    src: 'https://img01.yzcdn.cn/vant/apple-1.jpg', // 配图地址
+                    name: '模板名称', // 模板名称
+                    images: [
+                        'https://img01.yzcdn.cn/vant/apple-1.jpg',
+                        'https://img01.yzcdn.cn/vant/apple-2.jpg',
+                    ],
+                    id: '' // 唯一id等
+                })
+            }
+        },
+        search() {
+        },
+        clear() {
+            this.searchVal = ''
+        },
+        // 预览图片
+        previewImage(val) {
+            this.show = true;
+            this.images = val.images || []
+        },
+        // 取消
+        cancle() {
+            this.show = false;
+        },
+        // 选择
+        select() {
+            alert('选定')
+        }
+    }
 }
 </script>
 <style lang="less">
-
+.template-container {
+    height: calc(100vh - 46px);
+    .list-container {
+        padding: 1vh 0;
+        height: calc(100vh - 100px);
+        box-sizing: border-box;
+        overflow-y: auto;
+        .template-name {
+            font-size: 14px;
+        }
+    }
+    .van-image-preview__cover {
+        bottom: 10vh;
+        top: auto;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
 </style>
