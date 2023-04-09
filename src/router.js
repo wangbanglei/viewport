@@ -70,6 +70,20 @@ const routes = [
     meta: {
       title: '动态创作'
     }
+  },
+  {
+    name: 'expertlist',
+    component: () => import('./view/expert/list'),
+    meta: {
+      title: '专家列表'
+    }
+  },
+  {
+    name: 'expertdetail',
+    component: () => import('./view/expert/detail'),
+    meta: {
+      title: '专家详情'
+    }
   }
 ];
 
