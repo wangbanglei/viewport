@@ -140,7 +140,7 @@ export default {
     methods: {
         // 去作品集
         toWorks() {
-            this.$router.push('/works')
+            this.$router.push('/template')
         },
         // 去创作
         toCreate() {

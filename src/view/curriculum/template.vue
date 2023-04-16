@@ -3,11 +3,14 @@
         <van-search v-model="searchVal" @search="search"  @clear="clear" placeholder="请输入搜索关键词" shape="round" left-icon="" right-icon="search" background=""></van-search>
         <van-grid :gutter="20" :column-num="2" class="list-container" :border=false>
             <van-grid-item v-for="(item, index) in templateList" :key="index" :clickable=true @click="previewImage(item)">
-                <van-image :src="item.src" radius="20" />
+                <van-image :src="item.src" radius="20"/>
                 <span class="template-name">{{item.name}}</span>
             </van-grid-item>
         </van-grid>
-        <van-image-preview v-model="show" :images="images">
+        <van-image-preview v-model="show" :images="images" showIndicators className="preview">
+            <template v-slot:index>
+                <span>{{currentTemplate.name}}</span>
+            </template>
             <template v-slot:cover>
                 <van-button plain type="info" @touchstart="cancle">取消</van-button>
                 <van-button plain type="info" @touchstart="select" style="margin-left: 10vw;">选定</van-button>
@@ -23,6 +26,7 @@ export default {
             templateList: [],
             show: false, // 是否展示图片预览框
             images: [], // 展示的图片地址
+            currentTemplate: {} // 当前模板
         }
     },
     created() {
@@ -50,7 +54,8 @@ export default {
         // 预览图片
         previewImage(val) {
             this.show = true;
-            this.images = val.images || []
+            this.images = val.images || [];
+            this.currentTemplate = val;
         },
         // 取消
         cancle() {
@@ -58,7 +63,7 @@ export default {
         },
         // 选择
         select() {
-            alert('选定')
+            this.$router.push({ path: 'works', query: { id: 1, type: 'create' }})
         }
     }
 }
@@ -76,10 +81,27 @@ export default {
         }
     }
     .van-image-preview__cover {
-        bottom: 10vh;
+        bottom: 15vh;
         top: auto;
         left: 50%;
         transform: translateX(-50%);
+    }
+    .preview {
+        .van-image-preview__image {
+            width: 70vw;
+            position: absolute;
+            height: 60vh;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 2.66667vw;
+            top: 10vh;
+        }
+        .van-swipe__indicators {
+            bottom: 26vh;
+        }
+        .van-image-preview__index {
+            top: calc(10vh - 30px);
+        }
     }
 }
 </style>
