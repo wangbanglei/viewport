@@ -20,9 +20,20 @@ export default {
   },
 
   computed: {
-    title() {
-      return this.$route.meta.title
+    title: {
+      get() {
+        return this.$route.meta.title
+      },
+      set(val) {
+        this.$route.meta.title = val
+      }
     }
+  },
+
+  created() {
+    this.bus.$on("changeTitle", (val)=> {
+      this.title = val
+    })
   },
 
   data() {

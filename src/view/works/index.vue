@@ -1,12 +1,14 @@
 <template>
     <div class="works-container">
-        {{scaleX}}--{{scaleY}}
-        <button @click="addImg(imgList[0], {left: 100,top: 100,width: 50,height: 50, angle: 0})">添加图片</button>
-        <button @click="addRect({left: 100,top: 100, width: 50, height: 50, fill: 'red',stroke: 'black', angle: 0})">添加矩形框</button>
-        <button @click="createImg">生成图片</button>
-        <button @click="getData">获取数据</button>
-        <div>
-          <canvas id="canvas"></canvas>
+        <div class="swipe-box" :style="{width: width + 'px', height: height + 'px'}">
+            <van-swipe @change="changeIndex" :initial-swipe="currentIndex">
+                <van-swipe-item v-for="(image, index) in imgList" :key="index">
+                    <canvas :id="'canvas-' + index"></canvas>
+                </van-swipe-item>
+            </van-swipe>
+        </div>
+        <div class="preview-box" v-if="operationType === 'edit'" :style="{width: width + 'px'}">
+            <img v-for="(image, index) in imgList" :src="image" :key="index" class="preview-img" @click="changeIndex(index)">
         </div>
         <van-popup v-model="popup" :close-on-click-overlay="false" :round="true">
             <div class="popup-modal">
@@ -29,14 +31,19 @@ export default {
     return {
       popup: false, // 弹框
       name: "", // 作品名称
-      canvas: null,
+      canvas: {},
       scaleX: 1,
       scaleY: 1,
       width: 0, // 宽度
       height: 0, // 高度
       imgList: [],
       id: '', // 模板id
-      type: '' //  当前类型
+      type: '', //  当前类型 创建 或者 查看
+      currentIndex: 0, // 当前第几张图片
+      allData: { // 所有的数据
+
+      },
+      operationType: 'edit' // 编辑 edit, 个性化 personality 
     };
   },
   created() {
@@ -45,25 +52,51 @@ export default {
     this.id = id;
     this.type = type;
     this.imgList = templateList[id].images;
-    console.log(templateList, id, templateList[id])
   },
   mounted() {
-    const { w, h } = this.getContainerInfo(9 / 16);
-    this.width = w;
-    this.height = h;
-    this.canvas = this.initCanvas(this.imgList[0]) //  /be/pic/183b2ecf-1cdb-43d0-8796-35b11aab9d4e.png
-    // this.addImg('/abk/static/img/%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F.53166f5..png')
-    this.addRect({
-      left: 100,
-      top: 100,
-      width: 50,
-      height: 50,
-      fill: 'red',
-      stroke: 'black',
-      angle: 0
-    })
+    this.getBoxInfo();
+    this.createAllCanvas();
+    this.changeTitle()
   },
   methods: {
+    // 修改页面标题
+    changeTitle() {
+        let name = '';
+        switch(this.operationType) {
+            case 'edit': 
+                name = '作品集编辑';
+                break
+            case 'personality':
+                name = '作品集个性化';
+                break
+        }
+        this.bus.$emit('changeTitle', name)
+    },
+    // 修改Index
+    changeIndex(index) {
+        this.currentIndex = index;
+    },
+    // 计算容器宽度
+    getBoxInfo() {
+        const { w, h } = this.getContainerInfo(9 / 16);
+        this.width = w;
+        this.height = h;
+    },
+    // 初始化所有的canvas
+    createAllCanvas() {
+        this.imgList.forEach((item, index)=> {
+            this.canvas[index] = this.initCanvas(index, this.imgList[index])
+            this.addRect(index, {
+                left: 100,
+                top: 100,
+                width: 50,
+                height: 50,
+                fill: 'red',
+                stroke: 'black',
+                angle: 0
+            })
+        })
+    },
     // 退出
     exit() {
       window.history.go(-1);
@@ -85,6 +118,7 @@ export default {
         const height = item.height * sY;
         if (type === "image") {
           this.addImg(
+            this.currentIndex,
             this.imgList[0],
             {
               left,
@@ -95,7 +129,7 @@ export default {
             }
           );
         } else if (type === "rect") {
-          this.addRect({
+          this.addRect(this.currentIndex, {
             left,
             top,
             width,
@@ -110,8 +144,8 @@ export default {
 
     // 根据当前屏幕按照比例计算出容器的大小(假设宽高比9/16)
     getContainerInfo(aspectRatio) {
-      const w = document.body.clientWidth;
-      const h = document.body.clientHeight;
+      const w = document.body.clientWidth * 0.8;
+      const h = document.body.clientHeight * 0.8;
       const containerSspectRatio = w / h; // 容器的宽高比
       console.log(containerSspectRatio);
       if (containerSspectRatio > aspectRatio) {
@@ -129,8 +163,8 @@ export default {
     },
 
     // 初始化canvas
-    initCanvas(url) {
-      const canvas = new fabric.Canvas("canvas", {
+    initCanvas(id, url) {
+      const canvas = new fabric.Canvas( (id || id === 0) ? `canvas-${id}` : 'canvas', {
         width: this.width,
         height: this.height
       });
@@ -166,7 +200,8 @@ export default {
     },
 
     // 添加图片
-    addImg(url, data) {
+    addImg(id, url, data) {
+      id = id || this.currentIndex;
       if (url) {
         fabric.Image.fromURL(url, img => {
           if (data) {
@@ -183,13 +218,14 @@ export default {
               scaleY
             }); // 拿图片的真实高度
           }
-          this.canvas.add(img);
+          this.canvas[id].add(img);
         });
       }
     },
 
     // 添加矩形
-    addRect(data) {
+    addRect(id, data) {
+      id = id || this.currentIndex  
       const { left, top, width, height, fill, stroke, angle } = data;
       const rect = new fabric.Rect({
         left,
@@ -200,7 +236,7 @@ export default {
         stroke,
         angle
       });
-      this.canvas.add(rect);
+      this.canvas[id].add(rect);
     },
 
     // icon渲染函数
@@ -310,6 +346,20 @@ export default {
         cursor: pointer;
         margin-top: 20px;
       }
+    }
+  }
+  .swipe-box {
+    margin: 1vh auto;
+  }
+  .preview-box {
+    height: 12vh;
+    margin: 0 auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    .preview-img {
+        height: 100%;
+        margin: 0 5px;
     }
   }
 }
