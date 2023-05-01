@@ -1,9 +1,11 @@
 <template>
     <div class="works-container">
         <div class="swipe-box" :style="{width: width + 'px', height: height + 'px'}">
-            <van-swipe @change="changeIndex" :initial-swipe="currentIndex" :touchable="operationType === 'edit'">
+            <van-swipe @change="changeIndex" :initial-swipe="currentIndex" :touchable="operationType !== 'personality'">
                 <van-swipe-item v-for="(image, index) in imgList" :key="index">
                     <canvas :id="'canvas-' + index"></canvas>
+                    <!-- 利用遮罩层阻止canvas的事件 -->
+                    <span v-show="operationType === 'preview'" class="mask-box"></span>
                 </van-swipe-item>
             </van-swipe>
         </div>
@@ -25,10 +27,12 @@
         </div>
         <!-- :style="{width: width + 'px'}" -->
         <div class="operate-box">
-          <span class="operate-box-item" style="display: inline-block;"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="save">保存</van-button></span>
-          <span class="operate-box-item" v-if="operationType === 'personality'" style="display: inline-block;"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="edit">编辑</van-button></span>
-          <span class="operate-box-item" v-if="operationType === 'edit'" style="display: inline-block;"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="individuation">个性化</van-button></span>
-          <span class="operate-box-item" style="display: inline-block;"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="generate">生成</van-button></span>
+          <span class="operate-box-item col-3" v-if="['personality','edit'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="save">保存</van-button></span>
+          <span class="operate-box-item col-3" v-if="['personality'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="edit">编辑</van-button></span>
+          <span class="operate-box-item col-3" v-if="['edit'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="individuation">个性化</van-button></span>
+          <span class="operate-box-item col-3" v-if="['personality','edit'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="generate">生成</van-button></span>
+          <span class="operate-box-item col-2" v-if="['preview'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="saveAlbum">保存相册</van-button></span>
+          <span class="operate-box-item col-2" v-if="['preview'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="share">分享</van-button></span>
         </div>
         <van-popup v-model="popup" :close-on-click-overlay="false" :round="true">
             <div class="popup-modal">
@@ -41,6 +45,7 @@
                 </div>
             </div>
         </van-popup>
+        <van-share-sheet v-model="showShare" :options="options" cancel-text=""/>
     </div>
 </template>
 <script>
@@ -63,7 +68,7 @@ export default {
       allData: { // 所有的数据
 
       },
-      operationType: 'edit', // 编辑 edit, 个性化 personality
+      operationType: 'edit', // 编辑 edit, 个性化 personality， 预览 preview
       sourceMap: [
         {
           name: '类型一',
@@ -91,7 +96,12 @@ export default {
         // },
       ],
       currentSource: 1, // 当前激活状态的选中素材类型
-      decorationMap: {} // 素材资源
+      decorationMap: {}, // 素材资源
+      showShare: false, // 是否展示分享面板
+      options: [
+        { name: '微信好友', icon: 'wechat' },
+        { name: '朋友圈', icon: 'wechat-moments' },
+      ],
     };
   },
   created() {
@@ -108,9 +118,22 @@ export default {
     this.changeTitle()
   },
   methods: {
+    // 保存到相册
+    saveAlbum() {
+
+    },
+    // 分享
+    share() {
+      this.showShare = true;
+    },
     // 保存
     save() {
-
+      const data = {
+        id: this.id, // 模板id
+        name: this.name, // 作品名称
+        data: [] // 数据
+      }
+      console.log(data)
     },
     // 编辑
     edit() {
@@ -124,7 +147,8 @@ export default {
     },
     // 生成
     generate() {
-
+      this.operationType = 'preview';
+      this.changeTitle()
     },
     // 修改页面标题
     changeTitle() {
@@ -136,6 +160,10 @@ export default {
             case 'personality':
                 name = '作品集个性化';
                 break
+            case 'preview':
+                name = '作品集个性化预览'
+                break
+
         }
         this.bus.$emit('changeTitle', name)
     },
@@ -389,6 +417,9 @@ export default {
 .works-container {
   height: calc(100vh - 46px);
   background: #F5F5F5;
+  .van-share-sheet__option{
+    flex: 1;
+  }
   .popup-modal {
     width: 80vw;
     height: 60vw;
@@ -421,8 +452,16 @@ export default {
     }
   }
   .swipe-box {
+    position: relative;
     margin: 0 auto;
     padding: 1vh 0;
+    .mask-box {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+    }
   }
   .preview-box {
     position: absolute;
@@ -461,7 +500,14 @@ export default {
       padding: 0 20px;
     }
     .operate-box-item {
+      display: inline-block;
+      text-align: center;
+    }
+    .col-3 {
       width: 32vw;
+    }
+    .col-2 {
+      width: 48vw;
     }
   }
   .source-box {
