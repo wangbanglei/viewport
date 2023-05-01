@@ -19,13 +19,21 @@ export default {
     [NavBar.name]: NavBar
   },
 
-  computed: {
-    title: {
-      get() {
-        return this.$route.meta.title
-      },
-      set(val) {
-        this.$route.meta.title = val
+  // computed: {
+  //   title: {
+  //     get() {
+  //       return this.$route.meta.title
+  //     },
+  //     set(val) {
+  //       this.$route.meta.title = val
+  //     }
+  //   }
+  // },
+
+  watch: {
+    '$route.meta.title': {
+      handler(val) {
+        this.title = val;
       }
     }
   },
@@ -38,6 +46,7 @@ export default {
 
   data() {
     return {
+      title: ''
     };
   },
 

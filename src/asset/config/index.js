@@ -97,3 +97,58 @@ export const templateList = [
         id: 9 // 唯一id等
     }
 ]
+
+// 装饰资源 key 为id  value 为素材数组
+export const decoration = {
+    1: {
+        name: '类型一',
+        images: [
+            {
+                id: '1-1',
+                src: require('@/asset/image/decoration/1/1.png')
+            },
+            {
+                id: '1-2',
+                src: require('@/asset/image/decoration/1/2.png')
+            },
+            {
+                id: '1-3',
+                src: require('@/asset/image/decoration/1/3.png')
+            },
+            {
+                id: '1-4',
+                src: require('@/asset/image/decoration/1/4.png')
+            },
+            {
+                id: '1-5',
+                src: require('@/asset/image/decoration/1/5.png')
+            }
+        ]
+    },
+    2: {
+        name: '类型二',
+        images: [
+            {
+                id: '2-1',
+                src: require('@/asset/image/decoration/2/1.png')
+            },
+            {
+                id: '2-2',
+                src: require('@/asset/image/decoration/2/2.png')
+            },
+            {
+                id: '2-3',
+                src: require('@/asset/image/decoration/2/3.png')
+            },
+            {
+                id: '2-4',
+                src: require('@/asset/image/decoration/2/4.png')
+            },
+            {
+                id: '2-5',
+                src: require('@/asset/image/decoration/2/5.png')
+            }
+        ]
+    },
+}
+

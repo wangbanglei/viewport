@@ -1,14 +1,34 @@
 <template>
     <div class="works-container">
         <div class="swipe-box" :style="{width: width + 'px', height: height + 'px'}">
-            <van-swipe @change="changeIndex" :initial-swipe="currentIndex">
+            <van-swipe @change="changeIndex" :initial-swipe="currentIndex" :touchable="operationType === 'edit'">
                 <van-swipe-item v-for="(image, index) in imgList" :key="index">
                     <canvas :id="'canvas-' + index"></canvas>
                 </van-swipe-item>
             </van-swipe>
         </div>
-        <div class="preview-box" v-if="operationType === 'edit'" :style="{width: width + 'px'}">
-            <img v-for="(image, index) in imgList" :src="image" :key="index" class="preview-img" @click="changeIndex(index)">
+        <!-- :style="{width: width + 'px'}" -->
+        <div class="preview-box" v-if="operationType === 'edit'">
+            <span v-for="(image, index) in imgList" :key="index" style="position: relative">
+              <img :src="image" class="preview-img" @click="changeIndex(index)">
+              <span v-if="index === currentIndex" class="active-preview-img"></span>
+            </span>
+        </div>
+        <div class="source-box" v-if="operationType === 'personality'">
+          <van-tabs v-model="currentSource" swipeable>
+            <van-tab v-for="item in sourceMap" :title="item.name" :key="item.id">
+              <span v-for="(image, index) in decorationMap[item.id].images" :key="index" class="source-item">
+                <img :src="image.src" class="preview-img" @touchstart="addDecoration(image.src)">
+              </span>
+            </van-tab>
+          </van-tabs>
+        </div>
+        <!-- :style="{width: width + 'px'}" -->
+        <div class="operate-box">
+          <span class="operate-box-item" style="display: inline-block;"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="save">保存</van-button></span>
+          <span class="operate-box-item" v-if="operationType === 'personality'" style="display: inline-block;"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="edit">编辑</van-button></span>
+          <span class="operate-box-item" v-if="operationType === 'edit'" style="display: inline-block;"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="individuation">个性化</van-button></span>
+          <span class="operate-box-item" style="display: inline-block;"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="generate">生成</van-button></span>
         </div>
         <van-popup v-model="popup" :close-on-click-overlay="false" :round="true">
             <div class="popup-modal">
@@ -25,7 +45,7 @@
 </template>
 <script>
 import { fabric } from 'fabric';
-import { templateList } from "@/asset/config/index.js";
+import { templateList, decoration } from "@/asset/config/index.js";
 export default {
   data() {
     return {
@@ -43,7 +63,35 @@ export default {
       allData: { // 所有的数据
 
       },
-      operationType: 'edit' // 编辑 edit, 个性化 personality 
+      operationType: 'edit', // 编辑 edit, 个性化 personality
+      sourceMap: [
+        {
+          name: '类型一',
+          id: 1
+        },
+        // {
+        //   name: '类型二',
+        //   id: 2
+        // },
+        // {
+        //   name: '类型三',
+        //   id: 3
+        // },
+        // {
+        //   name: '类型四',
+        //   id: 4
+        // },
+        // {
+        //   name: '类型五',
+        //   id: 5
+        // },
+        // {
+        //   name: '类型六',
+        //   id: 6
+        // },
+      ],
+      currentSource: 1, // 当前激活状态的选中素材类型
+      decorationMap: {} // 素材资源
     };
   },
   created() {
@@ -52,6 +100,7 @@ export default {
     this.id = id;
     this.type = type;
     this.imgList = templateList[id].images;
+    this.decorationMap = decoration || {};
   },
   mounted() {
     this.getBoxInfo();
@@ -59,6 +108,24 @@ export default {
     this.changeTitle()
   },
   methods: {
+    // 保存
+    save() {
+
+    },
+    // 编辑
+    edit() {
+      this.operationType = 'edit';
+      this.changeTitle()
+    },
+    // 个性化
+    individuation() {
+      this.operationType = 'personality'
+      this.changeTitle()
+    },
+    // 生成
+    generate() {
+
+    },
     // 修改页面标题
     changeTitle() {
         let name = '';
@@ -147,7 +214,6 @@ export default {
       const w = document.body.clientWidth * 0.8;
       const h = document.body.clientHeight * 0.8;
       const containerSspectRatio = w / h; // 容器的宽高比
-      console.log(containerSspectRatio);
       if (containerSspectRatio > aspectRatio) {
         // 如果容器的宽高比大于期望的宽高比,说明我们需要将容器的h作为高度，然后按照期待的缩放比求出宽度
         return {
@@ -199,13 +265,18 @@ export default {
       return canvas;
     },
 
+    // 添加素材
+    addDecoration(src) {
+      this.addImg('', src);
+    },
+
     // 添加图片
     addImg(id, url, data) {
       id = id || this.currentIndex;
       if (url) {
         fabric.Image.fromURL(url, img => {
           if (data) {
-            const { left, top, angle, width, height } = data;
+            let { left = 0, top = 0, angle = 0, width = img.width, height = img.height } = data;
             const scaleX = width / img.width;
             const scaleY = height / img.height;
             img.set({
@@ -317,6 +388,7 @@ export default {
 <style lang="less">
 .works-container {
   height: calc(100vh - 46px);
+  background: #F5F5F5;
   .popup-modal {
     width: 80vw;
     height: 60vw;
@@ -349,17 +421,58 @@ export default {
     }
   }
   .swipe-box {
-    margin: 1vh auto;
+    margin: 0 auto;
+    padding: 1vh 0;
   }
   .preview-box {
+    position: absolute;
+    bottom: 4vh;
+    width: 100vw;
     height: 12vh;
     margin: 0 auto;
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
+    padding-bottom: 10px;
+    background: #FAFAFA;
+    box-sizing: border-box;
     .preview-img {
         height: 100%;
         margin: 0 5px;
+    }
+    .active-preview-img {
+      position: absolute;
+      background: #52d484;
+      height: 0.53333vw;
+      display: inline-block;
+      width: calc(100% - 10px);
+      left: 5px;
+      bottom: 0;
+    }
+  }
+  .operate-box {
+    position: absolute;
+    bottom: 0;
+    padding: 1vh 2vw;
+    width: 100vw;
+    background: #fff;
+    box-sizing: border-box;
+    .btn-works {
+      padding: 0 20px;
+    }
+    .operate-box-item {
+      width: 32vw;
+    }
+  }
+  .source-box {
+    margin: 0 auto;
+    .source-item {
+      display: inline-block;
+      position: relative;
+      width: 20vw;
+    }
+    .van-tabs__content {
+      padding: 1vh 0;
     }
   }
 }

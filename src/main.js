@@ -3,7 +3,7 @@ import App from './App';
 import { router } from './router';
 import 'vant/lib/index.less';
 import '#/styles/reset.css';
-import { Button, Icon, Popup, Field, Steps, Step, Search, Grid, GridItem, Image, ImagePreview, List, Cell, Swipe, SwipeItem, Lazyload } from 'vant';
+import { Button, Icon, Popup, Field, Steps, Step, Search, Grid, GridItem, Image, ImagePreview, List, Cell, Swipe, SwipeItem, Lazyload, Tabs, Tab } from 'vant';
 
 Vue.use(Button)
 Vue.use(Icon)
@@ -21,6 +21,8 @@ Vue.use(Cell)
 Vue.use(Swipe);
 Vue.use(SwipeItem);
 Vue.use(Lazyload);
+Vue.use(Tabs);
+Vue.use(Tab);
 Vue.prototype.bus = new Vue();
 
 
