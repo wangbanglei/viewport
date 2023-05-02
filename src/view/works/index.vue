@@ -32,7 +32,7 @@
           <span class="operate-box-item col-3" v-if="['edit'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="individuation">个性化</van-button></span>
           <span class="operate-box-item col-3" v-if="['personality','edit'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="generate">生成</van-button></span>
           <span class="operate-box-item col-2" v-if="['preview'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="saveAlbum">保存相册</van-button></span>
-          <span class="operate-box-item col-2" v-if="['preview'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @touchstart="share">分享</van-button></span>
+          <span class="operate-box-item col-2" v-if="['preview'].includes(operationType)"><van-button class="btn-works" round size="small" color="#49D391" @click="share">分享</van-button></span>
         </div>
         <van-popup v-model="popup" :close-on-click-overlay="false" :round="true">
             <div class="popup-modal">
@@ -45,7 +45,7 @@
                 </div>
             </div>
         </van-popup>
-        <van-share-sheet v-model="showShare" :options="options" cancel-text=""/>
+        <van-share-sheet v-model="showShare" :options="options" cancel-text=""  @select="selectShare"/>
     </div>
 </template>
 <script>
@@ -99,8 +99,8 @@ export default {
       decorationMap: {}, // 素材资源
       showShare: false, // 是否展示分享面板
       options: [
-        { name: '微信好友', icon: 'wechat' },
-        { name: '朋友圈', icon: 'wechat-moments' },
+        { name: '微信好友', icon: 'wechat', type: '1' },
+        { name: '朋友圈', icon: 'wechat-moments', type: '2' },
       ],
     };
   },
@@ -118,9 +118,35 @@ export default {
     this.changeTitle()
   },
   methods: {
+    // 分享
+    selectShare(options) {
+      const { type } = options;
+      switch (type) {
+        case '1':
+          console.log('调用微信好友分享接口!')
+          break;
+        case '2':
+          console.log('调用微信朋友圈分享接口!')
+          break;  
+      }
+    },
     // 保存到相册
     saveAlbum() {
-
+      const canvas = this.canvas;
+      const id = new Date().getTime()
+      for (let i in canvas) {
+        const item = canvas[i];
+        this.downloadImg(item.toDataURL({format: 'jpeg'}), `${id}-${i}`)
+      }
+    },
+    // 下载图片
+    downloadImg(src, id) {
+      const a = document.createElement("a");
+      a.setAttribute("href", src);
+      a.setAttribute("download", `${id}.jpg`);
+      a.setAttribute("target", "_blank");
+      a.setAttribute("id", "downLoad");
+      a.click();
     },
     // 分享
     share() {
@@ -128,12 +154,18 @@ export default {
     },
     // 保存
     save() {
+      const canvas = this.canvas;
+      const values = {}
+      for (let i in canvas) {
+        const info = this.getData(canvas[i])
+        values[i] = info;
+      }
       const data = {
         id: this.id, // 模板id
         name: this.name, // 作品名称
-        data: [] // 数据
+        data: values // 数据
       }
-      console.log(data)
+      localStorage.setItem(this.id, JSON.stringify(data));
     },
     // 编辑
     edit() {
@@ -180,16 +212,7 @@ export default {
     // 初始化所有的canvas
     createAllCanvas() {
         this.imgList.forEach((item, index)=> {
-            this.canvas[index] = this.initCanvas(index, this.imgList[index])
-            this.addRect(index, {
-                left: 100,
-                top: 100,
-                width: 50,
-                height: 50,
-                fill: 'red',
-                stroke: 'black',
-                angle: 0
-            })
+          this.canvas[index] = this.initCanvas(index, this.imgList[index])
         })
     },
     // 退出
@@ -202,39 +225,42 @@ export default {
     },
     // 从缓存中获取数据
     getDataByCache() {
-      const data = JSON.parse(localStorage.getItem("canvasData")) || [];
+      const info = JSON.parse(localStorage.getItem(this.id));
       const sX = this.scaleX; // 整体的缩放比例
       const sY = this.scaleY; // 整体的缩放比例
-      data.forEach(item => {
-        const { type, angle } = item;
-        const left = item.left * sX;
-        const top = item.top * sY;
-        const width = item.width * sX;
-        const height = item.height * sY;
-        if (type === "image") {
-          this.addImg(
-            this.currentIndex,
-            this.imgList[0],
-            {
+      const data = info.data || {};
+      for (let i in data) {
+        data[i].forEach(item => {
+          const { type, angle } = item;
+          const left = item.left * sX;
+          const top = item.top * sY;
+          const width = item.width * sX;
+          const height = item.height * sY;
+          if (type === "image") {
+            this.addImg(
+              i,
+              this.imgList[0],
+              {
+                left,
+                top,
+                width,
+                height,
+                angle
+              }
+            );
+          } else if (type === "rect") {
+            this.addRect(i, {
               left,
               top,
               width,
               height,
-              angle
-            }
-          );
-        } else if (type === "rect") {
-          this.addRect(this.currentIndex, {
-            left,
-            top,
-            width,
-            height,
-            angle,
-            fill: "red",
-            stroke: "black"
-          });
-        }
-      });
+              angle,
+              fill: "red",
+              stroke: "black"
+            });
+          }
+        });
+      }
     },
 
     // 根据当前屏幕按照比例计算出容器的大小(假设宽高比9/16)
@@ -273,6 +299,15 @@ export default {
             scaleX,
             scaleY
           });
+          this.addRect(id, {
+            left: 100,
+            top: 100,
+            width: 50,
+            height: 50,
+            fill: 'red',
+            stroke: 'black',
+            angle: 0
+          })
           this.getDataByCache();
         });
       }
@@ -368,8 +403,8 @@ export default {
       link.click();
     },
     // 获取数据（矩形旋转后，如果canvas画布变大后，再回显位置错位）
-    getData() {
-      const objects = this.canvas.getObjects();
+    getData(canvas) {
+      const objects = canvas.getObjects();
       const data = [];
       const sX = Number(this.scaleX);
       const sY = Number(this.scaleY);
@@ -389,7 +424,7 @@ export default {
           type
         });
       });
-      localStorage.setItem("canvasData", JSON.stringify(data));
+      return data;
     },
 
     // 计算选择后的位置
