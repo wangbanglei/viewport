@@ -34,7 +34,17 @@ export default {
   mounted() {
   },
   methods: {
-    search() {},
+    search() {
+      const searchVal = this.searchVal;
+      const arr = [];
+      templateList.forEach((item)=> {
+        const { name } = item;
+        if (name.indexOf(searchVal) > -1) {
+          arr.push(item)
+        }
+      })
+      this.templateList = arr;
+    },
     clear() {
       this.searchVal = "";
     },
@@ -60,7 +70,7 @@ export default {
   height: calc(100vh - 46px);
   .list-container {
     padding: 1vh 0;
-    height: calc(100vh - 100px);
+    max-height: calc(100vh - 100px);
     box-sizing: border-box;
     overflow-y: auto;
     .template-name {

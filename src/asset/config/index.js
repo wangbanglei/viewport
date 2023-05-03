@@ -1,7 +1,7 @@
 export const templateList = [
     {
         src: require("@/asset/image/template/0/1.jpg"), // 配图地址
-        name: '模板名称', // 模板名称
+        name: '模板名称1', // 模板名称
         images: [
             require('@/asset/image/template/0/1.jpg'),
             require('@/asset/image/template/0/2.jpg'),

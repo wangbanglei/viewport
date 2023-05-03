@@ -49,6 +49,7 @@ export default {
                     worksType: '作品集', // 作品集/章节/作品等
                     worksName: '聪明的一休', // 作品名称
                     operation: '创建', // 操作的动作 创建/学习/DIY/专家点评了
+                    id: '', // 模板id
                 },
                 {
                     src: '', 
