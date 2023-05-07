@@ -1,7 +1,7 @@
 export const templateList = [
     {
         src: require("@/asset/image/template/0/1.jpg"), // 配图地址
-        name: '模板名称1', // 模板名称
+        name: 'Party', // 模板名称
         images: [
             require('@/asset/image/template/0/1.jpg'),
             require('@/asset/image/template/0/2.jpg'),
@@ -25,29 +25,56 @@ export const templateList = [
         id: 1 // 唯一id等
     },
     {
-        src: 'https://img01.yzcdn.cn/vant/apple-1.jpg', // 配图地址
-        name: '模板名称', // 模板名称
+        src: require("@/asset/image/template/2/1.jpg"), // 配图地址
+        name: '游乐场', // 模板名称
         images: [
-            'https://img01.yzcdn.cn/vant/apple-1.jpg',
-            'https://img01.yzcdn.cn/vant/apple-2.jpg',
+            require('@/asset/image/template/2/1.jpg'),
+            require('@/asset/image/template/2/2.jpg'),
+            require('@/asset/image/template/2/3.jpg'),
+            require('@/asset/image/template/2/4.jpg'),
+            require('@/asset/image/template/2/5.jpg'),
+            require('@/asset/image/template/2/6.jpg'),
+            require('@/asset/image/template/2/7.jpg'),
+            require('@/asset/image/template/2/8.jpg'),
+            require('@/asset/image/template/2/9.jpg'),
+            require('@/asset/image/template/2/10.jpg'),
+            require('@/asset/image/template/2/11.jpg'),
         ],
         id: 2 // 唯一id等
     },
     {
-        src: 'https://img01.yzcdn.cn/vant/apple-1.jpg', // 配图地址
-        name: '模板名称', // 模板名称
+        src: require("@/asset/image/template/3/1.jpg"), // 配图地址
+        name: '动植物', // 模板名称
         images: [
-            'https://img01.yzcdn.cn/vant/apple-1.jpg',
-            'https://img01.yzcdn.cn/vant/apple-2.jpg',
+            require('@/asset/image/template/3/1.jpg'),
+            require('@/asset/image/template/3/2.jpg'),
+            require('@/asset/image/template/3/3.jpg'),
+            require('@/asset/image/template/3/4.jpg'),
+            require('@/asset/image/template/3/5.jpg'),
+            require('@/asset/image/template/3/6.jpg'),
+            require('@/asset/image/template/3/7.jpg'),
+            require('@/asset/image/template/3/8.jpg'),
+            require('@/asset/image/template/3/9.jpg'),
+            require('@/asset/image/template/3/10.jpg'),
+            require('@/asset/image/template/3/11.jpg'),
         ],
         id: 3 // 唯一id等
     },
     {
-        src: 'https://img01.yzcdn.cn/vant/apple-1.jpg', // 配图地址
-        name: '模板名称', // 模板名称
+        src: require("@/asset/image/template/4/1.jpg"), // 配图地址
+        name: '小怪物', // 模板名称
         images: [
-            'https://img01.yzcdn.cn/vant/apple-1.jpg',
-            'https://img01.yzcdn.cn/vant/apple-2.jpg',
+            require('@/asset/image/template/4/1.jpg'),
+            require('@/asset/image/template/4/2.jpg'),
+            require('@/asset/image/template/4/3.jpg'),
+            require('@/asset/image/template/4/4.jpg'),
+            require('@/asset/image/template/4/5.jpg'),
+            require('@/asset/image/template/4/6.jpg'),
+            require('@/asset/image/template/4/7.jpg'),
+            require('@/asset/image/template/4/8.jpg'),
+            require('@/asset/image/template/4/9.jpg'),
+            require('@/asset/image/template/4/10.jpg'),
+            require('@/asset/image/template/4/11.jpg'),
         ],
         id: 4 // 唯一id等
     },

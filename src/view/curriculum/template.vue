@@ -12,8 +12,8 @@
                 <span>{{currentTemplate.name}}</span>
             </template>
             <template v-slot:cover>
-                <van-button plain type="info" @touchstart="cancle">取消</van-button>
-                <van-button plain type="info" @touchstart="select" style="margin-left: 10vw;">选定</van-button>
+                <van-button plain type="info" @click="cancle">取消</van-button>
+                <van-button plain type="info" @click="select" style="margin-left: 10vw;">选定</van-button>
             </template>
         </van-image-preview>
     </div>
