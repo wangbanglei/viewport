@@ -66,8 +66,8 @@ export default {
             const Region = 'ap-beijing';  /* 存储桶所在地域，必须字段 */
             // SecretId 和 SecretKey请登录 https://console.cloud.tencent.com/cam/capi 进行查看和管理
             this.cos = new COS({
-                SecretId: '',
-                SecretKey: '',
+                SecretId: res.credentials.tmpSecretId,
+                SecretKey: res.credentials.tmpSecretKey,
             });
         }).catch (err => {
             console.error('获取cos失败')
