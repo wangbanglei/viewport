@@ -10,6 +10,7 @@
     "lint": "set NODE_OPTIONS=--openssl-legacy-provider & vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^1.4.0",
     "fabric": "^5.3.0",
     "vant": "^2.2.0",
     "vue": "^2.6.10",

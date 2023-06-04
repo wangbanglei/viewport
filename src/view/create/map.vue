@@ -1,5 +1,6 @@
 <template>
     <div class="learning-map">
+        <div class="bg"><img :src="bgUrl" /></div>
         <van-overlay :show="show" @click="show = false">
             <div class="stars">这里是小星星</div>
             <div class="swiper">
@@ -20,15 +21,34 @@
 export default {
     data() {
         return {
-            show: true
+            show: false,
+            bgUrl: require('../../asset/image/map/map-bg.png')
         }
     },
+    methods: {
+        confirm () {
+            //
+        }
+    }
 }
 </script>
 <style lang="less">
 .learning-map {
     position: relative;
     text-align: center;
+    width: 100%;
+    height:calc(100vh - 46px);
+    .bg{
+        position: absolute;
+        left:0;
+        bottom:0;
+        width: 100%;
+        height:100%;
+        img{
+            width: 100%;
+            height: 100%;
+        }
+    }
     .swiper{
         height: 300px;
         width: 200px;

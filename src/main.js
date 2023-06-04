@@ -1,6 +1,9 @@
 import Vue from 'vue';
 import App from './App';
 import { router } from './router';
+
+import axios from 'axios'
+
 import 'vant/lib/index.less';
 import '#/styles/reset.css';
 import {Col, Row, Overlay, Button, Icon, Popup, Field, Steps, Step, Search, Grid, GridItem, Image, ImagePreview, List, Cell, Swipe, SwipeItem, Lazyload, Tabs, Tab, ShareSheet } from 'vant';
@@ -28,7 +31,7 @@ Vue.use(Tabs);
 Vue.use(Tab);
 Vue.use(ShareSheet);
 Vue.prototype.bus = new Vue();
-
+Vue.prototype.$http = axios;
 
 new Vue({
   router,
